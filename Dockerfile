@@ -4,7 +4,7 @@ FROM python:3.12-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Install Node.js and npm
+# Install curl and Node.js
 RUN apt-get update && apt-get install -y \
     curl \
     && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -25,9 +25,6 @@ RUN pip install -r requirements.txt
 
 # Make port 8000 available to the world outside this container
 EXPOSE 8000
-
-# Define environment variable
-ENV NAME World
 
 # Run the application
 CMD ["python", "app.py"]
