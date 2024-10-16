@@ -1,30 +1,27 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12-slim
+FROM python:3.12-slim as python-base
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Install curl and Node.js
-RUN apt-get update && apt-get install -y \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean
+# Copy the requirements file and install Python dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the current directory contents into the container at /app
+# Install Node.js
+RUN apt-get update && apt-get install -y nodejs npm
+
+# Copy the rest of your application code
 COPY . .
 
 # Install Node.js dependencies
 RUN npm install
 
-# Build the project
+# Build your Node.js application
 RUN npm run build
 
-# Install Python dependencies
-RUN pip install -r requirements.txt
-
-# Make port 8000 available to the world outside this container
+# Expose the port Flask will run on
 EXPOSE 8000
 
-# Run the application
+# Command to run your application
 CMD ["python", "app.py"]
